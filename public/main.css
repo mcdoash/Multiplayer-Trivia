@@ -1,0 +1,178 @@
+:root {
+    --bg-colour: #00004d; 
+    --accent-colour1: #ffd966;
+    --accent-colour1-dark: #ff8c1a;
+    --accent-colour2: #d92653;
+    --accent-colour2-dark: #800000;
+    --txt-colour-dark: #000066;
+    --txt-colour-medium: #80bfff;
+    --txt-colour-light: #e5ffff;
+    
+    --font1: "Luckiest Guy";
+    --font2: "Fredoka One";
+    --font3: "Lora";
+}
+
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+html {
+    font-size: 16px;
+}
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    align-items: center;
+    background-color: var(--bg-colour);
+}
+h1 {
+    font-size: 4rem;
+    line-height: 3rem;
+    font-family: var(--font1);
+    text-align: center;
+    text-shadow: 2px 2px var(--accent-colour2-dark);
+    font-variant-caps: petite-caps;
+    color: var(--accent-colour2);
+}
+h2 {
+    font-size: 2rem;
+    font-family: var(--font2);
+    text-align: center;
+    text-shadow: 2px 2px var(--accent-colour2);
+    color: var(--accent-colour1-dark);
+}
+h3 {
+    font-size: 1.5rem;
+    font-family: var(--font2);
+    color: var(--txt-colour-dark);
+}
+p {
+    font-size: 1rem;
+    font-family: var(--font3);
+    color: var(--txt-colour-dark);
+}
+hr {
+    margin: 2% 0;
+    border-left: 2px solid var(--accent-colour2-dark);
+}
+.button {
+    min-width: 25%;
+    min-height: 7vh;
+    min-height: 60px;
+    padding: 2%;
+    margin: 3%;
+    font-size: 1.6rem;
+    font-family: var(--font2);
+    line-height: 5vh;
+    color: var(--txt-colour-light);
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: var(--accent-colour1);
+    border: 3px solid var(--accent-colour1-dark);
+    border-radius: 10px;
+    transition: linear 0.25s;
+}
+.button:hover, .button.disabled {
+    color: var(--txt-colour-dark);
+    text-shadow: 1.5px 1.5px var(--txt-colour-light);
+    background-color: var(--accent-colour1-dark);
+    border: 3px solid var(--accent-colour1);
+}
+input[type="text"] {
+    width: 62%;
+    height: 7vh;
+    min-height: 60px;
+    padding: 2%;
+    margin: 3%;
+    font-size: 1.5rem;
+    font-family: var(--font2);
+    color: var(--txt-colour-dark);
+    outline: none;
+    border: 3px solid #333;
+    border-radius: 10px;
+}
+input::placeholder {
+    color: #808080;
+}
+
+
+
+form#join-game {
+    width: 50vw;
+    height: 50vh;
+    margin: 10% auto;
+    padding: 3%;
+    /*display: none;*/
+    background-color: #f2f2f2;
+    border-radius: 25px;
+    box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.5);
+}
+form#join-game * {
+    display: inline-block;
+}
+
+
+#game {
+    display: none;
+    display: none;
+    align-items: center;
+    justify-content: flex-start;
+}
+#scores {
+    width: 20vw;
+    height: 100vh;
+    margin-right: 10vw;
+    /*background-image: linear-gradient(to right, #000, #000, #000, var(--bg-colour));
+    background-repeat: no-repeat;*/
+}
+.question {
+    width: 60vw;
+    height: 80vh;
+    padding: 5%;
+    margin-right: 10vw;
+    background-color: #f2f2f2;
+    border-radius: 25px;
+    box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.5);
+}
+.question hr {
+    visibility: hidden;
+    border-bottom: 25px solid;
+}
+.options {
+    height: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.question .radio {
+    width: 46%;
+    height: 30%;
+    padding: 2%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--txt-colour-dark);
+    font-size: 2rem;
+    font-family: var(--font2);
+    background-color: var(--accent-colour1);
+    border-radius: 20px;
+    box-shadow: 5px 5px var(--accent-colour1-dark);
+}
+.question .radio.selected {
+    background-color: var(--accent-colour1-dark);
+    border-radius: 20px;
+    box-shadow: 5px 5px var(--accent-colour1);
+}
+.question .radio.disabled {
+    background-color: #999;
+    border-radius: 20px;
+    box-shadow: 5px 5px #666;
+}

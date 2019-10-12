@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="main.css">
         
         <!--fonts-->
-        <link href="https://fonts.googleapis.com/css?family=" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One|Lora|Luckiest+Guy&display=swap" rel="stylesheet">
         
         <!--icons-->
         <script src="https://kit.fontawesome.com/815e3fa0ad.js" crossorigin="anonymous"></script>
@@ -17,15 +17,27 @@
     </head>
     
     <script src="/socket.io/socket.io.js"></script>
-    <script src="join.js"></script>
+    <script src="game.js"></script>
     
     <body>
         <div id="wrapper">
-            <form name="join-game" onsubmit="">
-                <input type="text" name="name">
-                <input type="submit" value="Join">
+            <!--join form-->
+            <form id="join-game" name="join-game">
+                <input type="text" name="name" placeholder="Your name is...">
+                <div class="button" onclick="joinGame()"><h2>Join</h2></div>
             </form>
+            
+            <!--game screen-->
+            <div id="game">
+                <div id="scores">
+                    <div id="your-score">
+                    </div>
+                </div>
+                <div id="trivia">
+                    <!--question and options will appear here-->
+                </div>
+            </div>
+            
         </div>
-        
     </body>
 </html>
