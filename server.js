@@ -38,18 +38,15 @@ io.on("connection", function(socket) {
     
     //set base vaules for new user
     socket.on("newUser", name => {
-        console.log(name + " (#" + socket.id + ") joined!");
-        socket.username = name;
-        socket.score = 0;
-        socket.answered = false;
-        socket.emit("addUser", name);
-        
-        users.push(new User(socket.id, socket.username, socket.score, socket.answered));
-        
-        socket.emit("initScores", users);
-        
         //start game if this is the first user
         if(userNum === 1) {
+            initQuestions(setUpUser);
+        }
+        else {
+            setUpUser();
+        }
+        
+        function initQuestions(callback) {
             //reset values for new round
             qNum = 0;
             numAnswered = 0;
@@ -61,13 +58,24 @@ io.on("connection", function(socket) {
                 }
                 //set questions
                 questions = body.results;
-                
-                //display first question
-                socket.emit("newQuestion", questions[qNum]);
+                callback();
             });
         }
-        else {
-            /*socket.emit("newQuestion", questions[qNum]);*/
+        
+        function setUpUser() {
+            console.log(name + " (#" + socket.id + ") joined!");
+        
+            socket.username = name;
+            socket.score = 0;
+            socket.answered = false;
+            socket.emit("addUser", name);
+
+            users.push(new User(socket.id, socket.username, socket.score, socket.answered));
+
+            socket.emit("initScores", users);
+
+            //display question
+            socket.emit("newQuestion", questions[qNum]);
         }
     });
     
@@ -87,7 +95,7 @@ io.on("connection", function(socket) {
                 
             }
             else {
-                socket.emit("newQuestion", questions[qNum]);
+                io.emit("newQuestion", questions[qNum]);
             }
         }
     });
