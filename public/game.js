@@ -1,5 +1,6 @@
 let socket = null;
 let qNum = 0;
+let correctAnswer = "";
 
 function joinGame() {
     let name = document.forms["join-game"]["name"].value;
@@ -11,8 +12,9 @@ function joinGame() {
         if(socket == null) {
             socket = io();
             socket.on("addUser", addToGame);
+            //socket.on("initScores", initScores);
             socket.on("newQuestion", nextQ);
-            socket.on("updateScores", updateScores)
+            socket.on("updateScore", updateScores)
             socket.emit("newUser", name);
         }
     }
@@ -22,9 +24,37 @@ function addToGame(name) {
     //hide join form and show game screen
     let joinForm = document.getElementById("join-game");
     let gameScreen = document.getElementById("game");
+    /*let scores = document.getElementById("scores");
     
+    let userScore = document.createElement("div");
+    userScore.setAttribute("id", socket.id);
+    userScore.classList.add("others-scores");
+    
+    let scoreContent = "<h2>" + name + " &nbsp;<sup>0</sup>&frasl;<sub>5</sub></h2><h3>&checkmark; Answered</h3>";
+    
+    userScore.innerHTML = scoreContent;
+    scores.appendChild(userScore);*/
+
     joinForm.style.display = "none";
     gameScreen.style.display = "flex";
+}
+
+function initScores(users) {
+    let html = "";
+    
+    for(let i=0; i<users.length; i++) {
+        html += '<div class="others-scores" id="' + users[i].id + '"><h2>' + users[i].name + ' &nbsp;<sup>' + users[i].score + '</sup>&frasl;<sub>5</sub></h2><h3>';
+        
+        if(users[i].answered == true) {
+            html += '&checkmark; Answered';
+        }
+        else {
+            html += 'Waiting...';
+        }
+        html += '</h3></div>';
+    }
+    
+    document.getElementById("scores").innerHTML = html;
 }
 
 /*
@@ -44,7 +74,9 @@ function nextQ(q) {
         options.push(q.incorrect_answers[x]);
     }
     options.push(q.correct_answer);
-
+    correctAnswer = q.correct_answer; //save correct answer
+    
+    
     //randomize option order
     for(let i=options.length-1; i>0; i--) {
         let rand = Math.floor(Math.random() * i);
@@ -79,15 +111,17 @@ function questionAnswered(selected) {
     
     //add styling for selected option
     selected.classList.add("selected");
+    selected.classList.remove("disabled");
     
     //check if option was correct
-    if(selected.value.localeCompare(test[i].correct_answer) === 0) {
+    if(selected.getAttribute("value").localeCompare(correctAnswer) === 0) {
         score = 100; //add 100 to score
         //display
     }
     
     
     //tell the server user answered the question
+    socket.answered = true;
     socket.emit("qAnswered", score);
 }
 

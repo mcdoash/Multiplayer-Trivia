@@ -50,7 +50,7 @@ h2 {
 h3 {
     font-size: 1.5rem;
     font-family: var(--font2);
-    color: var(--txt-colour-dark);
+    color: var(--accent-colour1);
 }
 p {
     font-size: 1rem;
@@ -109,7 +109,6 @@ form#join-game {
     height: 50vh;
     margin: 10% auto;
     padding: 3%;
-    /*display: none;*/
     background-color: #f2f2f2;
     border-radius: 25px;
     box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.5);
@@ -121,7 +120,6 @@ form#join-game * {
 
 #game {
     display: none;
-    display: none;
     align-items: center;
     justify-content: flex-start;
 }
@@ -129,8 +127,20 @@ form#join-game * {
     width: 20vw;
     height: 100vh;
     margin-right: 10vw;
+    padding: 2%;
+    overflow: scroll;
+    background-color: #000;
     /*background-image: linear-gradient(to right, #000, #000, #000, var(--bg-colour));
     background-repeat: no-repeat;*/
+}
+#scores h1 {
+    width: 100%;
+}
+#scores .others-scores {
+    margin: 5% 0;
+}
+#scores .others-scores h2 {
+    text-align: left;
 }
 .question {
     width: 60vw;
@@ -172,7 +182,8 @@ form#join-game * {
     box-shadow: 5px 5px var(--accent-colour1);
 }
 .question .radio.disabled {
-    background-color: #999;
+    cursor: auto;
+    background-color: #666;
     border-radius: 20px;
-    box-shadow: 5px 5px #666;
+    box-shadow: 5px 5px #999;
 }
