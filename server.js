@@ -8,7 +8,6 @@ let userNum = 0;
 let questions;
 let qNum = 0;
 let numAnswered = 0;
-let users = [];
 
 
 //serve static files
@@ -67,22 +66,46 @@ io.on("connection", function(socket) {
         
             socket.username = name;
             socket.score = 0;
-            socket.answered = false;
-            socket.emit("addUser", name);
-
-            users.push(new User(socket.id, socket.username, socket.score, socket.answered));
-
-            socket.emit("initScores", users);
-
-            //display question
+            
+            //add client to game
+            socket.emit("addUser", {name: socket.username, score: socket.score});
+            
+            //display client to others users
+            socket.broadcast.emit("addScore", {id: socket.id, name: socket.username, score: socket.score});
+            
+            //display question to client
             socket.emit("newQuestion", questions[qNum]);
         }
     });
     
+    socket.on("initScores", id => {
+        let sockets = io.sockets.sockets;
+        
+        for(let i in sockets) {
+            if(sockets[i].id != socket.id) {
+                socket.emit("addScore", {id: sockets[i].id, name: sockets[i].username, score: sockets[i].score});
+                //answered styling
+            }
+        }
+    });
+    
+    
+    
     //when a user has answered a question
     socket.on("qAnswered", score => {
         socket.score += score;
-        socket.emit("updateScore", socket.id);
+        if(socket.score < 0) {
+            socket.score = 0;
+        }
+        //show others client has answered
+        socket.broadcast.emit("userAnswered", socket.id);
+        
+        //shoe others client's new score
+        socket.broadcast.emit("updateScore", {id: socket.id, name: socket.username, score: socket.score});
+        
+        //update client score on their page
+        socket.emit("updateClientScore", socket.score);
+        
         numAnswered++;
         
         //if everyone has answered, move on to the next question
@@ -95,25 +118,15 @@ io.on("connection", function(socket) {
                 
             }
             else {
+                //reset answered
+                io.emit("resetAnswered");
+                
                 io.emit("newQuestion", questions[qNum]);
             }
         }
     });
-    
-    /*socket.on("nextQ", q => {
-        qNum++;
-        socket.emit("newQuestion", questions[qNum]);
-    });*/
 });
 
 
 server.listen(3000);
 console.log("Server running on port 3000");
-
-
-function User(id, username, score, answered) {
-  this.id = id;
-  this.name = username;
-  this.score = score;
-  this.answered = answered;
-}

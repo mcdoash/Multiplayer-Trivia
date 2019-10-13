@@ -12,50 +12,38 @@ function joinGame() {
         if(socket == null) {
             socket = io();
             socket.on("addUser", addToGame);
-            //socket.on("initScores", initScores);
+            socket.on("addScore", addScore);
+            socket.on("userAnswered", userAnswered);
+            socket.on("resetAnswered", resetAnswered);
             socket.on("newQuestion", nextQ);
-            socket.on("updateScore", updateScores)
+            socket.on("updateScore", updateScore);
+            socket.on("updateClientScore", updateClientScore);
+            
             socket.emit("newUser", name);
         }
     }
 }
 
-function addToGame(name) {
-    //hide join form and show game screen
+function addToGame(data) {
+    let name = data.name;
+    let score = data.score;
+    
+    //initialize scores
+    socket.emit("initScores", socket.id);
+    
     let joinForm = document.getElementById("join-game");
     let gameScreen = document.getElementById("game");
-    /*let scores = document.getElementById("scores");
-    
-    let userScore = document.createElement("div");
-    userScore.setAttribute("id", socket.id);
-    userScore.classList.add("others-scores");
-    
-    let scoreContent = "<h2>" + name + " &nbsp;<sup>0</sup>&frasl;<sub>5</sub></h2><h3>&checkmark; Answered</h3>";
-    
-    userScore.innerHTML = scoreContent;
-    scores.appendChild(userScore);*/
+    let clientScore = document.getElementById("client-info");
 
+    //
+    let html = '<h1>' + name + '</h1><h1 id="client-score">' + score + '</h1></div>'
+    clientScore.innerHTML = html;
+    
+    //hide join form and show game screen
     joinForm.style.display = "none";
     gameScreen.style.display = "flex";
 }
 
-function initScores(users) {
-    let html = "";
-    
-    for(let i=0; i<users.length; i++) {
-        html += '<div class="others-scores" id="' + users[i].id + '"><h2>' + users[i].name + ' &nbsp;<sup>' + users[i].score + '</sup>&frasl;<sub>5</sub></h2><h3>';
-        
-        if(users[i].answered == true) {
-            html += '&checkmark; Answered';
-        }
-        else {
-            html += 'Waiting...';
-        }
-        html += '</h3></div>';
-    }
-    
-    document.getElementById("scores").innerHTML = html;
-}
 
 /*
 
@@ -104,9 +92,9 @@ function questionAnswered(selected) {
     let options = document.getElementsByClassName("radio");
     
     //disable all options + add styling
-    for(let x=0; x<options.length; x++) {
-        options[x].onclick = null;
-        options[x].classList.add("disabled");
+    for(let i=0; i<options.length; i++) {
+        options[i].onclick = null;
+        options[i].classList.add("disabled");
     }
     
     //add styling for selected option
@@ -116,15 +104,56 @@ function questionAnswered(selected) {
     //check if option was correct
     if(selected.getAttribute("value").localeCompare(correctAnswer) === 0) {
         score = 100; //add 100 to score
-        //display
     }
     
-    
-    //tell the server user answered the question
-    socket.answered = true;
+    //tell the server client answered the question
     socket.emit("qAnswered", score);
 }
 
-function updateScores() {
+function addScore(data) {
+    let id = data.id;
+    let name = data.name;
+    let score = data.score;
+    
+    let scores = document.getElementById("scores");
+    
+    let userScore = document.createElement("div");
+    userScore.setAttribute("id", id);
+    userScore.classList.add("others-scores");
+    
+    let scoreContent = "<h2>" + name + ": &nbsp;" + score + "</h2></div>";
+    
+    userScore.innerHTML = scoreContent;
+    scores.appendChild(userScore);
+}
+
+function updateScore(data) {
+    let id = data.id;
+    let name = data.name;
+    let score = data.score;
+    
+    let scoreDiv = document.getElementById(id);
     let html = "";
+    
+    html += '<h2>' + name + ': &nbsp;' + score + '</h2>';
+}
+
+function updateClientScore(score) {
+    //update client's score on page
+    document.getElementById("client-score").textContent = score;
+}
+
+function userAnswered(id) {
+    let user = document.getElementById(id);
+    if(user != null) {
+        user.classList.add("answered");
+    }
+    
+}
+function resetAnswered() {
+    let scores = document.getElementsByClassName("others-scores");
+    
+    for(let i=0; i<scores.length; i++) {
+        scores[i].classList.remove("answered");
+    }
 }

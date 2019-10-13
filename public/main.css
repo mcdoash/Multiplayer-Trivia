@@ -123,6 +123,8 @@ form#join-game * {
     align-items: center;
     justify-content: flex-start;
 }
+
+
 #scores {
     width: 20vw;
     height: 100vh;
@@ -135,13 +137,22 @@ form#join-game * {
 }
 #scores h1 {
     width: 100%;
+    margin-bottom: 2%;
 }
 #scores .others-scores {
     margin: 5% 0;
 }
 #scores .others-scores h2 {
     text-align: left;
+    color: #ddd;
+    text-shadow: 2px 2px #333;
 }
+#scores .others-scores.answered h2 {
+    color: var(--accent-colour1-dark);
+    text-shadow: 2px 2px var(--accent-colour2);
+}
+
+
 .question {
     width: 60vw;
     height: 80vh;
