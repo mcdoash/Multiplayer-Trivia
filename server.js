@@ -6,8 +6,6 @@ const request = require("request");
 
 let userNum = 0;
 let questions;
-let qNum = 0;
-let numAnswered = 0;
 let rooms = [];
 
 
@@ -17,8 +15,6 @@ app.use(express.static('public'))
 
 //socket.io events
 io.on("connection", function(socket) {
-    //connection made, increase number of users
-    userNum++;
     console.log("A connection was made.");
     
     socket.on("disconnect", () => {
@@ -42,7 +38,7 @@ io.on("connection", function(socket) {
         let validCode = false;
         
         for(let i=0; i<rooms.length; i++) {
-            if(rooms[i] == code) {
+            if(rooms[i].id == code) {
                 validCode = true;
                 break;
             }
@@ -51,16 +47,24 @@ io.on("connection", function(socket) {
             socket.emit("alert", "Invalid code");
         }
         else {
-            socket.join(code);
-            setUpUser(name);
+            let room = code;
+            socket.join(room, () => {
+                let rooms = Object.keys(socket.rooms);
+                console.log("1: " + rooms); // [ <socket.id>, 'room 237' ]
+                socket.username = name;
+                setUpUser();
+              });
         }
     });
     
     socket.on("createRoom", name => {
         //room name is the id of the client who created it
-        rooms.push(socket.id);
-        socket.join("room-" + socket.id);
-        
+        rooms.push({id: ("room-" + socket.id), userNum: 1, numAnswered: 0});
+        let room = "room-" + socket.id;
+        socket.join(room, () => {
+                let rooms = Object.keys(socket.rooms);
+                console.log(rooms); // [ <socket.id>, 'room 237' ]
+              });
         socket.username = name;
         initQuestions(setUpUser);
     });
@@ -77,10 +81,21 @@ io.on("connection", function(socket) {
     });*/
     
     function setUpUser() {
-        socket.room = Object.values(socket.rooms)[1];
         socket.score = 0;
-
+        socket.room = Object.values(socket.rooms)[1];
+        console.log("2: " + Object.values(socket.rooms)[1]);
+        
         console.log(socket.username + " joined " + socket.room + "!");
+        
+        let index = rooms.findIndex(r => r.id == socket.room);
+        console.log(":) \t" + index + "\n\nARRAY");
+        
+        for(let i=0; i<rooms.length; i++) {
+            console.log(rooms[i].id);
+        }
+        
+        rooms[index][userNum] += 1;
+        console.log("Annnnnd.... " + rooms[index].userNum);
         
         //add client to game
         socket.emit("addUser", {name: socket.username, score: socket.score});
