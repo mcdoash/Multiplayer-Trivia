@@ -1,26 +1,41 @@
-let socket = null;
+let socket = io();
+socket.on("alert", sendAlert);
+socket.on("addUser", addToGame);
+socket.on("addScore", addScore);
+socket.on("userAnswered", userAnswered);
+socket.on("resetAnswered", resetAnswered);
+socket.on("newQuestion", nextQ);
+socket.on("updateScore", updateScore);
+socket.on("updateClientScore", updateClientScore);
+
 let qNum = 0;
 let correctAnswer = "";
 
 function joinGame() {
     let name = document.forms["join-game"]["name"].value;
+    let code = document.forms["join-game"]["room"].value;
     
-    if(name == null) {
+    if(name == "") {
         alert("Please enter a name");
     }
     else {
-        if(socket == null) {
-            socket = io();
-            socket.on("addUser", addToGame);
-            socket.on("addScore", addScore);
-            socket.on("userAnswered", userAnswered);
-            socket.on("resetAnswered", resetAnswered);
-            socket.on("newQuestion", nextQ);
-            socket.on("updateScore", updateScore);
-            socket.on("updateClientScore", updateClientScore);
-            
-            socket.emit("newUser", name);
-        }
+        socket.emit("attempedJoin", {code: code, name: name});
+        //socket.emit("newUser", name);
+    }
+}
+
+function sendAlert(message) {
+    alert(message);
+}
+
+function createGame() {
+    let name = document.forms["join-game"]["name"].value;
+    
+    if(name == "") {
+        alert("Please enter a name");
+    }
+    else {
+        socket.emit("createRoom", name);
     }
 }
 

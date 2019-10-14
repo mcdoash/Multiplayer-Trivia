@@ -24,7 +24,32 @@
             <!--join form-->
             <form id="join-game" name="join-game">
                 <input type="text" name="name" placeholder="Your name is...">
+                
+                <h1>Join Game</h1>
+                <input type="text" name="room" placeholder="Enter code...">
                 <div class="button" onclick="joinGame()"><h2>Join</h2></div>
+                
+                <h1>Create your own</h1>
+                <!--<input type="number" name="num" placeholder="# Questions" min="1" max="99">
+
+                <div class="dropbtn">
+                    <h3 id="category">Category...</h3>
+                    <div class="dropdown" id="categories">
+                        <!--options will go here from api
+                    </div>
+                </div>
+
+                <div class="dropbtn">
+                    <h3 id="difficulty">Difficulty...</h3>
+                    <div class="dropdown" id="difficulty">
+                        <h3 class="option" onclick="setOption(this)">Easy</h3>
+                        <h3 class="option" onclick="setOption(this)">Medium</h3>
+                        <h3 class="option" onclick="setOption(this)">Hard</h3>
+                    </div>
+                </div>-->
+                    
+                
+                <div class="button" onclick="createGame()"><h2>Create</h2></div>
             </form>
             
             <!--game screen-->
@@ -51,6 +76,10 @@
                     <!--sample data
                     <div class="question" id="0"><h1>Who is the main character in the VHS tape included in the board game Nightmare?</h1><h2 id="q-info">Category: Entertainment: Board Games | Difficulty: medium</h2><hr><div class="options"><div class="radio" onclick="questionAnswered(this)" name="0" value="The Nightmare">The Nightmare</div><div class="radio" onclick="questionAnswered(this)" name="0" value="The Kryptkeeper">The Kryptkeeper</div><div class="radio" onclick="questionAnswered(this)" name="0" value="The Gatekeeper">The Gatekeeper</div><div class="radio" onclick="questionAnswered(this)" name="0" value="The Monster">The Monster</div></div></div>-->
                 </div>
+            </div>
+            
+            <div id="chat">
+                <input type="text" id="msg-field" name="msg" placeholder="|">
             </div>
             
         </div>

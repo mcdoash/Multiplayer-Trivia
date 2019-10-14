@@ -8,6 +8,7 @@ let userNum = 0;
 let questions;
 let qNum = 0;
 let numAnswered = 0;
+let rooms = [];
 
 
 //serve static files
@@ -35,48 +36,61 @@ io.on("connection", function(socket) {
         }
     });
     
-    //set base vaules for new user
+    socket.on("attempedJoin", data => {
+        let code = data.code;
+        let name = data.name;
+        let validCode = false;
+        
+        for(let i=0; i<rooms.length; i++) {
+            if(rooms[i] == code) {
+                validCode = true;
+                break;
+            }
+        }
+        if(validCode == false) {
+            socket.emit("alert", "Invalid code");
+        }
+        else {
+            socket.join(code);
+            setUpUser(name);
+        }
+    });
+    
+    socket.on("createRoom", name => {
+        //room name is the id of the client who created it
+        rooms.push(socket.id);
+        socket.join("room-" + socket.id);
+        
+        socket.username = name;
+        initQuestions(setUpUser);
+    });
+    
+    /*set base vaules for new user
     socket.on("newUser", name => {
         //start game if this is the first user
         if(userNum === 1) {
-            initQuestions(setUpUser);
+            initQuestions(setUpUser(name));
         }
         else {
-            setUpUser();
+            setUpUser(name);
         }
-        
-        function initQuestions(callback) {
-            //reset values for new round
-            qNum = 0;
-            numAnswered = 0;
+    });*/
+    
+    function setUpUser() {
+        socket.room = Object.values(socket.rooms)[1];
+        socket.score = 0;
 
-            //request questions from OTDB
-            request("https://opentdb.com/api.php?amount=5", {json: true}, (err, res, body) => {
-                if(err) {
-                    alert("Request failed.");
-                }
-                //set questions
-                questions = body.results;
-                callback();
-            });
-        }
+        console.log(socket.username + " joined " + socket.room + "!");
         
-        function setUpUser() {
-            console.log(name + " (#" + socket.id + ") joined!");
-        
-            socket.username = name;
-            socket.score = 0;
-            
-            //add client to game
-            socket.emit("addUser", {name: socket.username, score: socket.score});
-            
-            //display client to others users
-            socket.broadcast.emit("addScore", {id: socket.id, name: socket.username, score: socket.score});
-            
-            //display question to client
-            socket.emit("newQuestion", questions[qNum]);
-        }
-    });
+        //add client to game
+        socket.emit("addUser", {name: socket.username, score: socket.score});
+
+        //display client to others users
+        socket.broadcast.to(socket.room).emit("addScore", {id: socket.id, name: socket.username, score: socket.score});
+
+        //display question to client
+        socket.emit("newQuestion", questions[qNum]);
+    }
     
     socket.on("initScores", id => {
         let sockets = io.sockets.sockets;
@@ -98,10 +112,10 @@ io.on("connection", function(socket) {
             socket.score = 0;
         }
         //show others client has answered
-        socket.broadcast.emit("userAnswered", socket.id);
+        socket.broadcast.to(socket.room).emit("userAnswered", socket.id);
         
-        //shoe others client's new score
-        socket.broadcast.emit("updateScore", {id: socket.id, name: socket.username, score: socket.score});
+        //show others client's new score
+        socket.broadcast.to(socket.room).emit("updateScore", {id: socket.id, name: socket.username, score: socket.score});
         
         //update client score on their page
         socket.emit("updateClientScore", socket.score);
@@ -115,18 +129,38 @@ io.on("connection", function(socket) {
             
             //end of round
             if(qNum === 5){
-                
+                initQuestions(startRound);
             }
             else {
                 //reset answered
-                io.emit("resetAnswered");
+                io.to(socket.room).emit("resetAnswered");
                 
-                io.emit("newQuestion", questions[qNum]);
+                io.to(socket.room).emit("newQuestion", questions[qNum]);
             }
         }
     });
 });
 
+
+function initQuestions(callback) {
+    //reset values for new round
+    qNum = 0;
+    numAnswered = 0;
+
+    //request questions from OTDB
+    request("https://opentdb.com/api.php?amount=5", {json: true}, (err, res, body) => {
+        if(err) {
+            alert("Request failed.");
+        }
+        //set questions
+        questions = body.results;
+        callback();
+    });
+}
+
+function startRound() {
+    io.to(socket.room).emit("newQuestion", questions[qNum]);
+}
 
 server.listen(3000);
 console.log("Server running on port 3000");

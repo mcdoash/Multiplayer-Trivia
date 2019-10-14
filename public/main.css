@@ -98,6 +98,20 @@ input[type="text"] {
     border: 3px solid #333;
     border-radius: 10px;
 }
+input[type="number"] {
+    width: 40%;
+    height: 7vh;
+    min-height: 60px;
+    padding: 2%;
+    margin: 3%;
+    font-size: 1.5rem;
+    font-family: var(--font2);
+    color: var(--accent-colour1);
+    background-color: var(--accent-colour1-dark);
+    outline: none;
+    border: 3px solid var(--accent-colour2-dark);
+    border-radius: 10px;
+}
 input::placeholder {
     color: #808080;
 }
@@ -106,7 +120,7 @@ input::placeholder {
 
 form#join-game {
     width: 50vw;
-    height: 50vh;
+    height: 70vh;
     margin: 10% auto;
     padding: 3%;
     background-color: #f2f2f2;
@@ -115,6 +129,55 @@ form#join-game {
 }
 form#join-game * {
     display: inline-block;
+}
+form#join-game h1 {
+    width: 100%;
+    text-align: left;
+}
+.dropbtn {
+    width: 40%;
+    height: 7vh;
+    min-height: 60px;
+    padding: 2%;
+    margin: 3%;
+    line-height: 5vh;
+    position: relative;
+    background-color: var(--accent-colour1-dark);
+    border: 3px solid var(--accent-colour2-dark);
+    border-radius: 10px;
+}
+.dropdown {
+    width: 100%;
+    max-height: 250px;
+    overflow-y: scroll;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    top: 6vh;
+    z-index: 99;
+    background-color: var(--accent-colour2-dark);
+    border: 3px solid var(--accent-colour2);
+    border-radius: 0 0 10px 10px;
+    transition: opacity linear 0.5s;
+}
+.dropdown h3 {
+    width: 100%;
+    padding: 2% 2% 2% 5%;
+    display: block;
+    cursor: pointer;
+    color: var(--accent-colour1-dark);
+    border-top: 1px solid var(--accent-colour2)  
+}
+.dropdown h3:last-child {
+    border-radius: 0 0 10px 10px;
+}
+.dropdown h3:hover, .dropdown h3.selected {
+    background-color: var(--accent-colour2);
+}
+.dropbtn:hover .dropdown {
+    visibility: visible;
+    opacity: 1;
 }
 
 
@@ -197,4 +260,22 @@ form#join-game * {
     background-color: #666;
     border-radius: 20px;
     box-shadow: 5px 5px #999;
+}
+
+
+#chat {
+    width: 20vw;
+    height: 50vh;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+}
+#chat #msg-field {
+    width: 20vw;
+    margin: 0;
+    padding: 10px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
 }
