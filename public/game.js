@@ -20,7 +20,6 @@ function joinGame() {
     }
     else {
         socket.emit("attempedJoin", {code: code, name: name});
-        //socket.emit("newUser", name);
     }
 }
 
@@ -151,6 +150,8 @@ function updateScore(data) {
     let html = "";
     
     html += '<h2>' + name + ': &nbsp;' + score + '</h2>';
+    
+    scoreDiv.innerHTML = html;
 }
 
 function updateClientScore(score) {
