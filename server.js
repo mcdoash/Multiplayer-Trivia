@@ -60,7 +60,7 @@ io.on("connection", function(socket) {
     //a user created a room
     socket.on("createRoom", name => {
         //room name is the id of the client who created it
-        rooms.push({id: ("room-" + socket.id), userNum: 0, numAnswered: 0, qNum: 0, round: 1, questions: []});
+        rooms.push({id: ("room-" + socket.id), userNum: 0, numAnswered: 0, qNum: 0, round: 1, questions: [], winner: null});
         
         socket.username = name;
         
@@ -71,8 +71,13 @@ io.on("connection", function(socket) {
     
     
     function setUpUser() {
-        socket.score = 0;
+        //user properties
         socket.room = Object.values(socket.rooms)[1];
+        socket.totalPoints = 0;
+        socket.avgScore = 0;
+        socket.roundsPlayed = 0;
+        socket.wins = 0;
+        socket.score = 0;
         
         console.log(socket.username + " joined " + socket.room + "!");
         
@@ -97,7 +102,7 @@ io.on("connection", function(socket) {
         socket.broadcast.to(socket.room).emit("addScore", {id: socket.id, name: socket.username, score: socket.score});
         
         //add client to game
-        socket.emit("addUser", {name: socket.username, score: socket.score, room: socket.room.id});
+        socket.emit("addUser", {name: socket.username, score: socket.score, room: socket.room});
 
     }
     
@@ -113,6 +118,17 @@ io.on("connection", function(socket) {
         }
     });
     
+    
+    socket.on("showStats", id => {
+        let sockets = io.sockets.sockets;
+        
+        for(let i in sockets) {
+            if(sockets[i].room == socket.room) {
+                socket.emit("addScore", {id: sockets[i].id, name: sockets[i].username, score: sockets[i].score});
+                //answered styling
+            }
+        }
+    });
     
     
     //when a user has answered a question
@@ -139,13 +155,7 @@ io.on("connection", function(socket) {
             
             //end of round
             if(rooms[socket.roomIndex].qNum === 5){
-        
-                //reset values for new round
-                rooms[socket.roomIndex].qNum = 0;
-                rooms[socket.roomIndex].round++;
-                rooms[socket.roomIndex].numAnswered = 0;
-                
-                initQuestions(startRound);
+                initQuestions(newRound);
             }
             else {
                 //reset answered
@@ -169,7 +179,26 @@ io.on("connection", function(socket) {
         });
     }
 
-    function startRound() {
+    function newRound() {
+        //reset values for new round
+        rooms[socket.roomIndex].qNum = 0;
+        rooms[socket.roomIndex].round++;
+        rooms[socket.roomIndex].numAnswered = 0;
+              
+        //reset everyone's score in room
+        let sockets = io.sockets.sockets;
+        for(let i in sockets) {
+            if(sockets[i].room == socket.room) {
+                
+                sockets[i].totalPoints += sockets[i].score;
+                sockets[i].roundsPlayed++;
+                sockets[i].avgScore = sockets[i].totalPoints/sockets[i].roundsPlayed;
+                sockets[i].wins = 0;
+                sockets[i].score = 0;
+            }
+        }
+        
+        //send out first question in new round
         io.to(socket.room).emit("newQuestion", rooms[socket.roomIndex].questions[rooms[socket.roomIndex].qNum]);
     }
     

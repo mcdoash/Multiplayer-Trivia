@@ -12,6 +12,7 @@ socket.on("updateClientScore", updateClientScore);
 
 let correctAnswer = "";
 
+
 /*
 
 */
@@ -76,6 +77,8 @@ function addToGame(data) {
     let html = '<h1>' + name + '</h1><h1 id="client-score">' + score + '</h1></div>'
     clientScore.innerHTML = html;
     
+    console.log(room);
+    console.log(document.getElementById("code"));
     document.getElementById("code").textContent = room;
     
     //hide join form and show game screen
@@ -99,7 +102,7 @@ function nextQ(q) {
     let html = "";
     
     //add question info to html string
-    html += '<div class="question"><h1>' + q.question + '</h1><h2 id="q-info">Category: ' + q.category + ' | Difficulty: ' + q.difficulty + '</h2><hr/><div class="options">';
+    html += '<div class="question"><h2>' + q.question + '</h2><h3 id="q-info">Category: ' + q.category + ' | Difficulty: ' + q.difficulty + '</h3><hr/><div class="options">';
     
     //get options
     let options = [];
