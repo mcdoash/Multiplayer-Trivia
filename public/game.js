@@ -9,7 +9,9 @@ socket.on("newQuestion", nextQ);
 socket.on("updateStatus", updateStatus);
 socket.on("updateScore", updateScore);
 socket.on("updateClientScore", updateClientScore);
+socket.on("roundOver", displayResults);
 
+//the correct answer for the current question
 let correctAnswer = "";
 
 
@@ -17,13 +19,16 @@ let correctAnswer = "";
 
 */
 function joinGame() {
+    //get the name and code user entered
     let name = document.forms["join-game"]["name"].value;
     let code = document.forms["join-game"]["room"].value;
     
+    //display alert if no name entered
     if(name == "") {
         alert("Please enter a name");
     }
     else {
+        //tell the server client attempted to join 
         socket.emit("attempedJoin", {code: code, name: name});
     }
 }
@@ -77,8 +82,7 @@ function addToGame(data) {
     let html = '<h1>' + name + '</h1><h1 id="client-score">' + score + '</h1></div>'
     clientScore.innerHTML = html;
     
-    console.log(room);
-    console.log(document.getElementById("code"));
+    //show room code
     document.getElementById("code").textContent = room;
     
     //hide join form and show game screen
@@ -251,4 +255,33 @@ function resetAnswered() {
     for(let i=0; i<scores.length; i++) {
         scores[i].classList.remove("answered");
     }
+}
+
+function displayResults(winners) {
+    console.log(winners);
+    let results = document.getElementById("winner");
+    console.log(results);
+    let winnerText = "";
+    
+    //handle more than one winner
+    if(winners.length > 1) {
+        for(let i in winners) {
+            winnerText += winners[i] + " and ";
+        }
+    }
+    else {
+        winnerText += winners[0] + " ";
+    }
+    winnerText += "won!";
+    
+    results.textContent = winnerText;
+    results.style.display = "block";
+}
+
+
+/*
+Closes the results modal
+*/
+function closeModal() {
+    document.getElementById("results").style.display = "none";
 }

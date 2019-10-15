@@ -24,7 +24,7 @@ io.on("connection", function(socket) {
         
         //REMOVE USER
         
-        console.log(socket.username + " left.");
+        console.log(socket.username + " left room " + socket.room + ".");
         
         //if there are no users connected
         if(rooms[socket.roomIndex].userNum === 0){
@@ -155,6 +155,10 @@ io.on("connection", function(socket) {
             
             //end of round
             if(rooms[socket.roomIndex].qNum === 5){
+                //calculate winner
+                calculateWinner();
+                
+                //start new round
                 initQuestions(newRound);
             }
             else {
@@ -179,10 +183,58 @@ io.on("connection", function(socket) {
         });
     }
 
+    function calculateWinner() {
+        let scores = [];
+        let winners = [];
+        
+        let sockets = io.sockets.sockets;
+        
+        //get all scores
+        for(let i in sockets) {
+            if(sockets[i].room == socket.room) {
+                scores.push({name: sockets[i].username, score: sockets[i].score});
+            }
+        }
+        
+        //sort all scores
+        scores.sort(function(a, b) {
+            var x = a.score;
+            var y = b.score;
+            if(x > y) {
+                return -1;
+            }
+            else if(x < y) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        });
+        
+        winners.push(scores[0].name);
+        
+        //handle multiple winners
+        for(let i=0; i<(scores.length-1); i++) {
+            if(scores[i].score === scores[i+1].score){
+               winners.push(scores[i+1].name);
+            }
+            else {
+                break;
+            }
+        }
+       
+       console.log(winners);
+        io.to(socket.room).emit("roundOver", winners);
+    }
+    
     function newRound() {
+        console.log("hmm");
+        
         //reset values for new round
         rooms[socket.roomIndex].qNum = 0;
         rooms[socket.roomIndex].round++;
+       
+        console.log(rooms[socket.roomIndex].round);
         rooms[socket.roomIndex].numAnswered = 0;
               
         //reset everyone's score in room
@@ -197,6 +249,13 @@ io.on("connection", function(socket) {
                 sockets[i].score = 0;
             }
         }
+        socket.broadcast.to(socket.room).emit("updateScore", {id: socket.id, name: socket.username, score: socket.score});
+        
+        //update client score on their page
+        socket.emit("updateClientScore", socket.score);
+        
+        //update game status
+        io.to(socket.room).emit("updateStatus", {round: rooms[socket.roomIndex].round, q: rooms[socket.roomIndex].qNum});
         
         //send out first question in new round
         io.to(socket.room).emit("newQuestion", rooms[socket.roomIndex].questions[rooms[socket.roomIndex].qNum]);

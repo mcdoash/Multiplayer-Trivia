@@ -138,13 +138,12 @@ form#join-game h1 {
 }
 
 
-
+/*GAME SCREEN*/
 #game {
     display: none;
     align-items: center;
     justify-content: flex-start;
 }
-
 
 #game-id {
     width: 20vw;
@@ -162,6 +161,7 @@ form#join-game h1 {
 }
 
 
+/*SCORE CARD*/
 #scores {
     width: 20vw;
     height: 100vh;
@@ -169,8 +169,6 @@ form#join-game h1 {
     padding: 2%;
     overflow: scroll;
     background-color: #000;
-    /*background-image: linear-gradient(to right, #000, #000, #000, var(--bg-colour));
-    background-repeat: no-repeat;*/
 }
 #scores h1 {
     width: 100%;
@@ -190,6 +188,7 @@ form#join-game h1 {
 }
 
 
+/*QUESTION*/
 #game-status {
     width: 80vw;
     position: fixed;
@@ -199,7 +198,6 @@ form#join-game h1 {
     color: var(--accent-colour1);
     text-shadow: 2px 2px var(--accent-colour1-dark);
 }
-
 
 .question {
     width: 60vw;
@@ -224,7 +222,7 @@ form#join-game h1 {
     border-bottom: 25px solid;
 }
 .options {
-    height: 80%;
+    height: 70%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -254,4 +252,33 @@ form#join-game h1 {
     background-color: #666;
     border-radius: 20px;
     box-shadow: 5px 5px #999;
+}
+
+
+
+/*RESULTS*/
+#results {
+    width: 65vw;
+    height: 85vh;
+    display: none;
+    position: fixed;
+    top: 10vh;
+    right: 7.5vw;
+    background-color: var(--accent-colour1);
+    opacity: 0.9;
+    border-radius: 25px;
+    box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.5);
+}
+#winner {
+    margin-top: 25%;
+    font-size: 10rem;
+    overflow-wrap: break-word;
+}
+#exit {
+    margin: 3% 5%;
+    font-size: 5rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
 }
