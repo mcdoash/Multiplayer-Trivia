@@ -17,6 +17,7 @@ app.use(express.static('public'))
 io.on("connection", function(socket) {
     console.log("A connection was made.");
     
+    //a user has disconnected
     socket.on("disconnect", () => {
         //disconnection, decrease number of users
         rooms[socket.roomIndex].userNum--;
@@ -32,6 +33,7 @@ io.on("connection", function(socket) {
         }
     });
     
+    //a user attemted to join a room
     socket.on("attempedJoin", data => {
         let code = data.code;
         let name = data.name;
@@ -55,6 +57,7 @@ io.on("connection", function(socket) {
         }
     });
     
+    //a user created a room
     socket.on("createRoom", name => {
         //room name is the id of the client who created it
         rooms.push({id: ("room-" + socket.id), userNum: 0, numAnswered: 0, qNum: 0, round: 1, questions: []});
@@ -65,6 +68,7 @@ io.on("connection", function(socket) {
             setUpUser();
         });
     });
+    
     
     function setUpUser() {
         socket.score = 0;
