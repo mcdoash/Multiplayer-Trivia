@@ -5,10 +5,10 @@ socket.on("addScore", addScore);
 socket.on("userAnswered", userAnswered);
 socket.on("resetAnswered", resetAnswered);
 socket.on("newQuestion", nextQ);
+socket.on("updateStatus", updateStatus);
 socket.on("updateScore", updateScore);
 socket.on("updateClientScore", updateClientScore);
 
-let qNum = 0;
 let correctAnswer = "";
 
 function joinGame() {
@@ -41,6 +41,7 @@ function createGame() {
 function addToGame(data) {
     let name = data.name;
     let score = data.score;
+    let room = data.room;
     
     //initialize scores
     socket.emit("initScores", socket.id);
@@ -52,6 +53,8 @@ function addToGame(data) {
     //
     let html = '<h1>' + name + '</h1><h1 id="client-score">' + score + '</h1></div>'
     clientScore.innerHTML = html;
+    
+    document.getElementById("code").textContent = room;
     
     //hide join form and show game screen
     joinForm.style.display = "none";
@@ -67,7 +70,7 @@ function nextQ(q) {
     let html = "";
     
     //add question info to html string
-    html += '<div class="question" id="' + qNum + '"><h1>' + q.question + '</h1><h2 id="q-info">Category: ' + q.category + ' | Difficulty: ' + q.difficulty + '</h2><hr/><div class="options">';
+    html += '<div class="question"><h1>' + q.question + '</h1><h2 id="q-info">Category: ' + q.category + ' | Difficulty: ' + q.difficulty + '</h2><hr/><div class="options">';
     
     //get options
     let options = [];
@@ -89,15 +92,17 @@ function nextQ(q) {
 
     //build options
     for(let x=0; x<options.length; x++) {
-        html += '<div class="radio" onclick="questionAnswered(this)" name="' + qNum + '" value="' + options[x] + '">' + options[x] + '</div>';
+        html += '<div class="radio" onclick="questionAnswered(this)" value="' + options[x] + '">' + options[x] + '</div>';
     }
     html += '</div></div>';
     
     //add the question html to the page
     document.getElementById("trivia").innerHTML = html;
-    
-    //increase the question number
-    qNum++;
+}
+
+function updateStatus(data) {
+    //update round/question display
+    document.getElementById("game-status").textContent = "Round " + data.round + " - Question " + (data.q + 1);
 }
 
 function questionAnswered(selected) {
@@ -164,8 +169,8 @@ function userAnswered(id) {
     if(user != null) {
         user.classList.add("answered");
     }
-    
 }
+
 function resetAnswered() {
     let scores = document.getElementsByClassName("others-scores");
     

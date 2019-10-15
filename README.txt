@@ -1,0 +1,1 @@
+While users can have the same username, each is identified by their unique socket id.

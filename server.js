@@ -11,6 +11,7 @@ let currentRoom = [];
 //serve static files
 app.use(express.static('public'))
 
+//INVALID REQUEST
 
 //socket.io events
 io.on("connection", function(socket) {
@@ -56,7 +57,7 @@ io.on("connection", function(socket) {
     
     socket.on("createRoom", name => {
         //room name is the id of the client who created it
-        rooms.push({id: ("room-" + socket.id), userNum: 0, numAnswered: 0, qNum: 0, questions: []});
+        rooms.push({id: ("room-" + socket.id), userNum: 0, numAnswered: 0, qNum: 0, round: 1, questions: []});
         
         socket.username = name;
         
@@ -85,11 +86,14 @@ io.on("connection", function(socket) {
             emitQ();
         }
         
+        //display game status to client
+        socket.emit("updateStatus", {round: rooms[socket.roomIndex].round, q: rooms[socket.roomIndex].qNum});
+        
         //display client to others users
         socket.broadcast.to(socket.room).emit("addScore", {id: socket.id, name: socket.username, score: socket.score});
         
         //add client to game
-        socket.emit("addUser", {name: socket.username, score: socket.score});
+        socket.emit("addUser", {name: socket.username, score: socket.score, room: socket.room.id});
 
     }
     
@@ -134,6 +138,7 @@ io.on("connection", function(socket) {
         
                 //reset values for new round
                 rooms[socket.roomIndex].qNum = 0;
+                rooms[socket.roomIndex].round++;
                 rooms[socket.roomIndex].numAnswered = 0;
                 
                 initQuestions(startRound);
@@ -144,6 +149,7 @@ io.on("connection", function(socket) {
                 
                 io.to(socket.room).emit("newQuestion", rooms[socket.roomIndex].questions[rooms[socket.roomIndex].qNum]);
             }
+            io.to(socket.room).emit("updateStatus", {round: rooms[socket.roomIndex].round, q: rooms[socket.roomIndex].qNum});
         }
     });
     

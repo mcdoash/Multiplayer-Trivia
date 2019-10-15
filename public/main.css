@@ -119,6 +119,9 @@ input::placeholder {
 
 
 form#join-game {
+    display: none;
+    
+    
     width: 50vw;
     height: 70vh;
     margin: 10% auto;
@@ -182,9 +185,25 @@ form#join-game h1 {
 
 
 #game {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: flex-start;
+}
+
+
+#game-id {
+    width: 20vw;
+    padding: 1%;
+    position: fixed; 
+    bottom: 0;
+    left: 0;
+    text-align: left;
+    background-color: #333;
+}
+#code {
+    color: var(--accent-colour1);
+    text-shadow: 2px 2px var(--accent-colour1-dark);
+    overflow-wrap: break-word;
 }
 
 
@@ -216,14 +235,36 @@ form#join-game h1 {
 }
 
 
+#game-status {
+    width: 80vw;
+    position: fixed;
+    top: 5vh;
+    right: 0;
+    font-size: 6rem;
+    color: var(--accent-colour1);
+    text-shadow: 2px 2px var(--accent-colour1-dark);
+}
+
+
 .question {
     width: 60vw;
     height: 80vh;
     padding: 5%;
     margin-right: 10vw;
+    margin-top: 5vh;
     background-color: #f2f2f2;
     border-radius: 25px;
     box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.5);
+}
+.question h1 {
+    padding-bottom: 2%;
+    font-size: 3rem;
+    line-height: 3rem;
+    font-family: var(--font3);
+    text-align: center;
+    text-shadow: 1px 1px var(--accent-colour2-dark);
+    font-variant-caps: normal;
+    color: var(--accent-colour2);
 }
 .question hr {
     visibility: hidden;
