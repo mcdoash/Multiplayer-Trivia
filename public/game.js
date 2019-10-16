@@ -8,6 +8,7 @@ socket.on("resetAnswered", resetAnswered);
 socket.on("newQuestion", nextQ);
 socket.on("updateStatus", updateStatus);
 socket.on("updateScore", updateScore);
+socket.on("initStats", addStats);
 socket.on("updateClientScore", updateClientScore);
 socket.on("roundOver", displayResults);
 
@@ -16,7 +17,7 @@ let correctAnswer = "";
 
 
 /*
-
+Client has attempted to join a game
 */
 function joinGame() {
     //get the name and code user entered
@@ -60,7 +61,7 @@ function createGame() {
 }
 
 /*
-Adds the client to the game by hiding thr "join game" screen and showing the trivia screen
+Adds the client to the game by hiding the "join game" screen and showing the trivia screen
 @params     data    an object containing:
                     name:   the name of the client
                     score:  the score of the client
@@ -134,8 +135,11 @@ function nextQ(q) {
     document.getElementById("trivia").innerHTML = html;
 }
 
+
+/*
+Updates round/question display
+*/
 function updateStatus(data) {
-    //update round/question display
     document.getElementById("game-status").textContent = "Round " + data.round + " - Question " + (data.q + 1);
 }
 
@@ -182,7 +186,7 @@ function addScore(data) {
     let name = data.name;
     let score = data.score;
     
-    //get score containter
+    //get score container
     let scores = document.getElementById("scores");
     
     //create new score element
@@ -205,7 +209,7 @@ Updates another user's score on the clients score sheet
                     score:  the score of the user
 */
 function updateScore(data) {
-    //get variabled from data
+    //get variables from data
     let id = data.id;
     let name = data.name;
     let score = data.score;
@@ -251,16 +255,16 @@ function resetAnswered() {
     //get all user scores on the score sheet
     let scores = document.getElementsByClassName("others-scores");
     
-    //removed answered styling
+    //removes answered styling
     for(let i=0; i<scores.length; i++) {
         scores[i].classList.remove("answered");
     }
 }
 
+/*
+Displays the winners of a round
+*/
 function displayResults(winners) {
-    console.log(winners);
-    let results = document.getElementById("winner");
-    console.log(results);
     let winnerText = "";
     
     //handle more than one winner
@@ -274,14 +278,50 @@ function displayResults(winners) {
     }
     winnerText += "won!";
     
-    results.textContent = winnerText;
-    results.style.display = "block";
+    //set and show modal
+    document.getElementById("winner").textContent = winnerText;
+    document.getElementById("results").style.display = "block";
 }
 
 
 /*
-Closes the results modal
+Closes a modal
 */
-function closeModal() {
-    document.getElementById("results").style.display = "none";
+function closeModal(modal) {
+    document.getElementById(modal).style.display = "none";
+}
+
+
+/*
+Displays the stats modal
+*/
+function getStats() {
+    //reset
+    document.getElementById("stat-holder").innerHTML = "";
+    socket.emit("showStats", 0);
+    document.getElementById("statistics").style.display = "block";
+}
+
+
+/*
+Adds a stat to the modal
+*/
+function addStats(data) {
+    //get values from data
+    let name = data.name;
+    let avgScore = data.avg;
+    let roundsPlayed = data.rounds;
+    let wins = data.wins;
+    
+    //get stats container
+    let statistics = document.getElementById("stat-holder");
+    
+    //create new stat element
+    let stat = document.createElement("div");
+    stat.classList.add("stat");
+    
+    //set stat content and append to container
+    let statContent = "<h1>" + name + "</h1><h2>Rounds played: " + roundsPlayed + "</h2><h2>Rounds won: " + wins + "</h2><h2>Average score: " + avgScore + "</h2>";
+    stat.innerHTML = statContent;
+    statistics.appendChild(stat);
 }

@@ -149,7 +149,7 @@ form#join-game h1 {
     width: 20vw;
     padding: 1%;
     position: fixed; 
-    bottom: 0;
+    bottom: 50px;
     left: 0;
     text-align: left;
     background-color: #333;
@@ -274,11 +274,41 @@ form#join-game h1 {
     font-size: 10rem;
     overflow-wrap: break-word;
 }
-#exit {
+.exit {
     margin: 3% 5%;
     font-size: 5rem;
     position: absolute;
     top: 0;
     right: 0;
     cursor: pointer;
+}
+
+
+
+/*STATISTICS*/
+#statistics {
+    width: 65vw;
+    height: 85vh;
+    display: none;
+    position: fixed;
+    top: 10vh;
+    right: 7.5vw;
+    overflow: scroll;
+    background-color: #f2f2f2;
+    border-radius: 25px;
+    box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.5);
+}
+.stat {
+    margin: 5% 0;
+}
+#get-stats {
+    width: 20vw;
+    height: 50px;
+    margin: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    cursor: pointer;
+    background-color: var(--accent-colour1);
+    border: 3px solid var(--accent-colour1-dark);
 }

@@ -10,10 +10,6 @@
         
         <!--fonts-->
         <link href="https://fonts.googleapis.com/css?family=Fredoka+One|Lora|Luckiest+Guy&display=swap" rel="stylesheet">
-        
-        <!--icons-->
-        <script src="https://kit.fontawesome.com/815e3fa0ad.js" crossorigin="anonymous"></script>
-        <script src="https://use.fontawesome.com/releases/v5.10.2/js/all.js" data-search-pseudo-elements></script>
     </head>
     
     <script src="/socket.io/socket.io.js"></script>
@@ -37,40 +33,32 @@
             <div id="game">
                 <h2 id="game-id">Code: <span id="code"></span></h2>
                 
-                <div id="admin-tools">
-                
-                </div>
+                <div id="get-stats" onclick="getStats()"><h2>Show Stats</h2></div>
                 
                 <div id="scores">
                     <div id="client-info">
                     </div>
-                    <!--sample data
-                    <div id="your-score">
-                        <h1>Name</h1>
-                        <h1><sup>0</sup>&frasl;<sub>5</sub></h1>
-                    </div>
-                    <div class="others-scores">
-                        <h2>Name &nbsp;<sup>0</sup>&frasl;<sub>5</sub></h2>
-                        <h3>&checkmark; Answered</h3>
-                    </div>
-                    <div class="others-scores">
-                        <h2>Name &nbsp;<sup>0</sup>&frasl;<sub>5</sub></h2>
-                        <h3>Waiting...</h3>
-                    </div>-->
+                     <!--scores will appear here-->
                 </div>
                 
                 <h1 id="game-status"></h1>
                 
                 <div id="trivia">
                     <!--question and options will appear here-->
-                    <!--sample data
-                    <div class="question" id="0"><h1>Who is the main character in the VHS tape included in the board game Nightmare?</h1><h2 id="q-info">Category: Entertainment: Board Games | Difficulty: medium</h2><hr><div class="options"><div class="radio" onclick="questionAnswered(this)" name="0" value="The Nightmare">The Nightmare</div><div class="radio" onclick="questionAnswered(this)" name="0" value="The Kryptkeeper">The Kryptkeeper</div><div class="radio" onclick="questionAnswered(this)" name="0" value="The Gatekeeper">The Gatekeeper</div><div class="radio" onclick="questionAnswered(this)" name="0" value="The Monster">The Monster</div></div></div>-->
                 </div>
                 
                 <div id="results">
-                    <h1 id="winner">Username won!</h1>
-                    <span id="exit" onclick="closeModal()">&times;</span>
+                    <h1 id="winner"></h1>
+                    <span class="exit" onclick="closeModal('results')">&times;</span>
                 </div>
+            </div>
+            
+            <div id="statistics">
+                <div id="stat-holder">
+                    <!--stats will appear here-->
+                </div>
+                
+                <span class="exit" onclick="closeModal('statistics')">&times;</span>
             </div>
             
         </div>
