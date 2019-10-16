@@ -155,8 +155,41 @@ io.on("connection", function(socket) {
             
             //end of round
             if(rooms[socket.roomIndex].qNum === 5){
+                
+                //reset values for new round
+                rooms[socket.roomIndex].qNum = 0;
+                rooms[socket.roomIndex].round++;
+
+                rooms[socket.roomIndex].numAnswered = 0;
+
+                //array of current round scores
+                let scores = [];
+                
+                //reset everyone's score in room
+                let sockets = io.sockets.sockets;
+                for(let i in sockets) {
+                    if(sockets[i].room == socket.room) {
+                        //add their score to the array to determine winner latter
+                        scores.push({name: sockets[i].username, score: sockets[i].score});
+                        
+                        sockets[i].totalPoints += sockets[i].score;
+                        sockets[i].roundsPlayed++;
+                        sockets[i].avgScore = sockets[i].totalPoints/sockets[i].roundsPlayed;
+                        sockets[i].wins = 0;
+                        sockets[i].score = 0;
+                         
+                        //update specific socket score
+                        io.to(socket.room).emit("updateScore", {id: sockets[i].id, name: sockets[i].username, score: sockets[i].score});
+                        
+                        //update client score on their page
+                        sockets[i].emit("updateClientScore", sockets[i].score);
+                    }
+                }
                 //calculate winner
-                calculateWinner();
+                calculateWinner(scores);
+                
+                //reset answered
+                io.to(socket.room).emit("resetAnswered");
                 
                 //start new round
                 initQuestions(newRound);
@@ -165,8 +198,10 @@ io.on("connection", function(socket) {
                 //reset answered
                 io.to(socket.room).emit("resetAnswered");
                 
+                //show next question
                 io.to(socket.room).emit("newQuestion", rooms[socket.roomIndex].questions[rooms[socket.roomIndex].qNum]);
             }
+           //update game status
             io.to(socket.room).emit("updateStatus", {round: rooms[socket.roomIndex].round, q: rooms[socket.roomIndex].qNum});
         }
     });
@@ -183,18 +218,8 @@ io.on("connection", function(socket) {
         });
     }
 
-    function calculateWinner() {
-        let scores = [];
+    function calculateWinner(scores) {
         let winners = [];
-        
-        let sockets = io.sockets.sockets;
-        
-        //get all scores
-        for(let i in sockets) {
-            if(sockets[i].room == socket.room) {
-                scores.push({name: sockets[i].username, score: sockets[i].score});
-            }
-        }
         
         //sort all scores
         scores.sort(function(a, b) {
@@ -222,38 +247,10 @@ io.on("connection", function(socket) {
                 break;
             }
         }
-       
-       console.log(winners);
         io.to(socket.room).emit("roundOver", winners);
     }
     
     function newRound() {
-        console.log("hmm");
-        
-        //reset values for new round
-        rooms[socket.roomIndex].qNum = 0;
-        rooms[socket.roomIndex].round++;
-       
-        console.log(rooms[socket.roomIndex].round);
-        rooms[socket.roomIndex].numAnswered = 0;
-              
-        //reset everyone's score in room
-        let sockets = io.sockets.sockets;
-        for(let i in sockets) {
-            if(sockets[i].room == socket.room) {
-                
-                sockets[i].totalPoints += sockets[i].score;
-                sockets[i].roundsPlayed++;
-                sockets[i].avgScore = sockets[i].totalPoints/sockets[i].roundsPlayed;
-                sockets[i].wins = 0;
-                sockets[i].score = 0;
-            }
-        }
-        socket.broadcast.to(socket.room).emit("updateScore", {id: socket.id, name: socket.username, score: socket.score});
-        
-        //update client score on their page
-        socket.emit("updateClientScore", socket.score);
-        
         //update game status
         io.to(socket.room).emit("updateStatus", {round: rooms[socket.roomIndex].round, q: rooms[socket.roomIndex].qNum});
         
