@@ -218,9 +218,11 @@ function updateScore(data) {
     let scoreDiv = document.getElementById(id);
     
     //update score content
-    let html = "";
-    html += '<h2>' + name + ': &nbsp;' + score + '</h2>';
-    scoreDiv.innerHTML = html;
+    
+    if(scoreDiv != null) {
+        let html = '<h2>' + name + ': &nbsp;' + score + '</h2>';
+        scoreDiv.innerHTML = html;
+    }
 }
 
 
@@ -270,7 +272,7 @@ function displayResults(winners) {
     //handle more than one winner
     if(winners.length > 1) {
         for(let i in winners) {
-            winnerText += winners[i] + " and ";
+            winnerText += winners[i] + ", ";
         }
     }
     else {
