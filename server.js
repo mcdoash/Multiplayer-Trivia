@@ -1,3 +1,10 @@
+/*
+To-do
+update player list on disconnect
+disconnect message
+*/
+
+
 const express = require("express");
 let app = express();
 const server = require("http").createServer(app);
@@ -20,13 +27,18 @@ io.on("connection", function(socket) {
     //a user has disconnected
     socket.on("disconnect", () => {
         //disconnection, decrease number of users in room
-        rooms[socket.roomIndex].userNum--;
-        
-        console.log(socket.username + " left room " + socket.room + ".");
-        
-        //if there are no users connected in room
-        if(rooms[socket.roomIndex].userNum === 0){
-            console.log("No users connected.")
+        if(rooms[socket.roomIndex]) {
+            rooms[socket.roomIndex].userNum--;
+            console.log(socket.username + " left room " + socket.room + ".");
+            
+
+            //if there are no users connected in room
+            if(rooms[socket.roomIndex].userNum === 0){
+                console.log("No users connected.")
+            }
+            else {
+                socket.broadcast.to(socket.room).emit("removePlayer", {id: socket.id});
+            }
         }
     });
     

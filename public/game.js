@@ -2,6 +2,7 @@
 let socket = io();
 socket.on("alert", sendAlert);
 socket.on("addUser", addToGame);
+socket.on("removePlayer", removePlayer);
 socket.on("addScore", addScore);
 socket.on("userAnswered", userAnswered);
 socket.on("resetAnswered", resetAnswered);
@@ -89,6 +90,26 @@ function addToGame(data) {
     //hide join form and show game screen
     joinForm.style.display = "none";
     gameScreen.style.display = "flex";
+}
+
+
+/*
+Rmoves a disconnected user from the score sheet.
+@params     data    an object containing:
+                    id: the user's id
+*/
+function removePlayer(data) {
+    console.log("ok");
+    //get values from data
+    let id = data.id;
+    
+    //get the corresponding score div of the user 
+    let scoreDiv = document.getElementById(id);
+    
+    //remove score of disconnected user
+    if(scoreDiv != null) {
+        scoreDiv.parentNode.removeChild(scoreDiv);
+    }
 }
 
 
